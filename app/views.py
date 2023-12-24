@@ -1,23 +1,23 @@
-from flask import Flask, abort
+from flask import Blueprint, abort
 import requests
 from markupsafe import escape
 import datetime
 import calendar
 
-app = Flask(__name__)
+bp = Blueprint("views", __name__, url_prefix="/views")
 
 
-@app.route("/")
+@bp.route("/hello")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "Hello, World!"
 
 
-@app.route("/<name>")
+@bp.route("/hello/<name>")
 def hello(name):
-    return f"<p>Hello, {escape(name)}!"
+    return f"Hello, {escape(name)}!"
 
 
-@app.route('/test')
+@bp.route('/test')
 def test():
     url = 'https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia.org/all-access/2023/11/01'
     headers = {'User-Agent': 'grow-therapy-take-home/0.0.1',
@@ -27,7 +27,7 @@ def test():
     return data
 
 
-@app.route('/views/article/month/<article>/<int:year>/<int:month>')
+@bp.route('/article/month/<article>/<int:year>/<int:month>')
 def top_viewed_articles_by_month(article: str, year: int, month: int):
     # Route example 127.0.0.1:5000/views/article/month/Dawngate/2023/11
     # Validate input
