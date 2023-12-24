@@ -1,10 +1,10 @@
 # Context
 
 
-
-
-
 # Installation
+
+## Testing
+Unit tests were implemented using pytest.  To run the entire test suite, use the `pytest` command.
 
 # API Documentation
 
@@ -88,8 +88,8 @@ _"The ISO year consists of 52 or 53 full weeks, and where a week starts on a Mon
 I've recorded a few of my thoughts as I tackled this problem in the hopes that you gain a better understanding of how I think and approach problems.
 ## On the most viewed articles for a week
 For the most viewed articles per week requirement, the wikipedia API has two relevant article-specific endpoints.
-* Get pageview counts for a page.
-* Get the most viewed articles for a project.
+* `Get pageview counts for a page`
+* `Get the most viewed articles for a project`
 
 The first is less useful here, due to the sheer number of articles.
 It would be expensive, and less practical to query all articles for their view counts.
@@ -99,11 +99,11 @@ This leads to the conclusion of gathering the data from 7 calls to the most view
 Once the data is gathered, it can be aggregated and sorted.
 
 There are corner cases with the threshold values that could make this approach not generate 100% accurate results.
-Luckily, these corner cases are resolved with the listed assumption that any article not listed on a day has 0 views.
+Luckily, these corner cases are resolved with the listed assumption that any article not listed on a day should be considered to have no views.
 
 ## On the most viewed articles per month
 The previous limitation with the wikipedia data granularity is not present with this use case.
-This lets us get away with using the API directly for the answer. 
+This lets us get away with using the `Get the most viewed articles for a project` endpoint directly for the answer. 
 
 ## On the view count of a specific article for a week or month
 Here the `Get pageview counts for a page` wikipedia endpoint helps out a great deal.
@@ -118,12 +118,25 @@ Again we are helped out by the `Get pageview counts for a page` wikipedia endpoi
 We can set the range to the target month, and the granularity to daily.
 The resulting array can be searched for the maximum view number, and the day that it corresponds to.
 
+## Assumptions
+In the implemented wikipedia service, hardcoded defaults were chosen when retrieving information
+The actual values to be used would depend on the use case, and the code could be easily updated to reflect the desired behavior.
+
+| Parameter | Default            | Rationale                                      |
+|-----------|--------------------|------------------------------------------------|
+| project   | `en.wikipedia.org` | English wikipedia is a commonly known project  |
+| access    | `all-access`       | Include all access methods                     | 
+| agent     | `user`             | Only include visits from users. (Exclude bots) |
+
+
 ## Next Steps
 Depends on context, and needs.  Seek feedback.
  * Authentication
+ * Persistence (currently designed in a passthrough manor)
  * Caching
  * Observability
  * Scalability
  * Convenience methods
  * Internationalization
  * Improved routing
+ * API Versioning
