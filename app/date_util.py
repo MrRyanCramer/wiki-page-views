@@ -1,6 +1,6 @@
 import calendar
 import datetime
-from typing import Tuple
+from typing import Tuple, List
 
 
 def get_datetime_range_for_month(year: int, month: int) -> Tuple[str, str]:
@@ -18,3 +18,10 @@ def get_datetime_range_for_week(year: int, week: int) -> Tuple[str, str]:
     formatted_start = start_date.strftime("%Y%m%d")
     formatted_end = end_date.strftime("%Y%m%d")
     return formatted_start, formatted_end
+
+
+def get_dates_for_week(year: int, week: int) -> List[datetime.date]:
+    dates = []
+    for day in range(1, 8):
+        dates.append(datetime.date.fromisocalendar(year, week, day))
+    return dates

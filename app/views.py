@@ -1,4 +1,4 @@
-from flask import Blueprint, abort
+from flask import Blueprint
 import requests
 from markupsafe import escape
 import datetime
@@ -23,10 +23,25 @@ def hello(name):
 def test():
     url = 'https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia.org/all-access/2023/11/01'
     headers = {'User-Agent': 'grow-therapy-take-home/0.0.1',
-               "accept": "application/json"}
+               'accept;': 'application/json'}
     response = requests.get(url, headers=headers)
     data = response.json()
     return data
+
+
+@bp.route('/top-articles/week/<int:year>/<int:week>')
+def top_articles_for_week(year: int, week: int):
+    service = WikipediaService()
+    articles = service.get_top_articles_for_week(year, week)
+    # TODO Consider better formatting for output instead of tuples
+    return {'articles': articles}
+
+
+@bp.route('/top-articles/month/<int:year>/<int:month>')
+def top_articles_for_month(year: int, month: int):
+    service = WikipediaService()
+    view_data = service.get_top_articles_for_month(year, month)
+    return view_data['items'][0]['articles']
 
 @bp.route('/article/week/<article>/<int:year>/<int:week>')
 def views_for_article_in_week(article: str, year: int, week: int):
@@ -38,6 +53,14 @@ def views_for_article_in_week(article: str, year: int, week: int):
     days = view_data['items']
     views_in_week = reduce(lambda view_total, day: view_total + day['views'], days, 0)
     return {'views': views_in_week}
+
+
+@bp.route('/article/month/<article>/<int:year>/<int:month>')
+def views_for_article_in_month(article: str, year: int, month: int):
+    service = WikipediaService()
+    view_data = service.get_monthly_views_for_article(article, year, month)
+    views_in_month = view_data['items'][0]['views']
+    return {'views': views_in_month}
 
 @bp.route('/top-day/<article>/<int:year>/<int:month>')
 def top_day_for_article_in_month(article: str, year: int, month: int):
@@ -53,4 +76,3 @@ def top_day_for_article_in_month(article: str, year: int, month: int):
     max_timestamp = max(days, key=lambda day: day['views'])['timestamp']
     formatted_day = datetime.datetime.strptime(max_timestamp, '%Y%m%d%H').day
     return {'day': formatted_day}
-
