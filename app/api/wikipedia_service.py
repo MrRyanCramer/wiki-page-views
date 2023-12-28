@@ -3,20 +3,11 @@ import urllib.parse
 
 import requests
 from flask import abort
-from requests import Response
+from requests import Response, JSONDecodeError
 import app.date_util as date_util
-from app.exceptions import ValidationError
-
-# from app.date import get_datetime_range_for_month, get_datetime_range_for_week
 
 
-def _validate_month(year: int, month: int):
-    input_date = datetime.date(year, month, 1)
-    if input_date > datetime.date.today():
-        raise ValidationError("Date information provided must be in the past")
-
-
-def _validate_article(article: str):
+def _format_article(article: str) -> str:
     return urllib.parse.quote(article)
 
 
@@ -49,14 +40,18 @@ class WikipediaService:
         return response.json()
 
     def get_daily_views_for_article(self, article: str, year: int, month: int):
-        _validate_month(year, month)
-        article = _validate_article(article)
+        # Validate input
+        input_date = date_util.validate_month(year, month)
+        date_util.validate_date_in_past(input_date)
+        formatted_article = _format_article(article)
 
-        url = self._build_daily_views_url(article, year, month)
+        # Build and send request
+        url = self._build_daily_views_url(formatted_article, year, month)
         response = self._send_request(url)
-        if response.status_code != requests.codes.ok:
-            abort(404)
-        return response.json()
+
+        # Verify and transform response
+        response.raise_for_status()
+        return response.json()['items']
 
     def get_weekly_views_for_article(self, article: str, year: int, week: int):
         url = self._build_weekly_views_url(article, year, week)

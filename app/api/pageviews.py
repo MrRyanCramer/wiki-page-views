@@ -1,7 +1,12 @@
 import datetime
+from requests.exceptions import HTTPError
 from functools import reduce
+
+from flask import abort
+
 from .wikipedia_service import WikipediaService
 from . import api
+from ..exceptions import ValidationError
 
 
 @api.route('/top-articles/week/<int:year>/<int:week>')
@@ -39,15 +44,16 @@ def views_for_article_in_month(article: str, year: int, month: int):
 
 @api.route('/top-day/<article>/<int:year>/<int:month>')
 def top_day_for_article_in_month(article: str, year: int, month: int):
-    # Route example 127.0.0.1:5000/views/top-day/Dawngate/2023/11
-    # Validate input
-
-    # Build and fire request
-    service = WikipediaService()
-    view_data = service.get_daily_views_for_article(article, year, month)
+    # Fetch view information from service
+    try:
+        days = WikipediaService().get_daily_views_for_article(article, year, month)
+    except ValidationError as error:
+        raise error
+    except (HTTPError, KeyError, ValueError) as error:
+        abort(500, description="Error fetching article view information")
 
     # Find day with most views
-    days = view_data['items']
     max_timestamp = max(days, key=lambda day: day['views'])['timestamp']
+    # Format value for return
     formatted_day = datetime.datetime.strptime(max_timestamp, '%Y%m%d%H').day
     return {'day': formatted_day}

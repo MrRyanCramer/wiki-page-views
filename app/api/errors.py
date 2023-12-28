@@ -16,6 +16,13 @@ def validation_error(e):
 
 @api.errorhandler(404)
 def not_found(e):
-    response = jsonify({'error': 'not found'})
+    response = jsonify(error=str(e))
     response.status_code = 404
+    return response
+
+
+@api.errorhandler(500)
+def internal_server_error(e):
+    response = jsonify(error=str(e))
+    response.status_code = 500
     return response

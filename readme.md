@@ -42,11 +42,11 @@ Returns the day of the month when an article got the most page views.
 
 ### Parameters
 
-| Parameter | Description                           |
-|-----------|---------------------------------------|
-| article   | The title of the article.             |
-| year      | The year of the date, in YYYY format. |
-| month     | The month of the date, in MM format.  |
+| Parameter | Description                                  |
+|-----------|----------------------------------------------|
+| article   | The [title of the article.](#article-titles) |
+| year      | The year of the date, in YYYY format.        |
+| month     | The month of the date, in MM format.         |
 
 ## Article views for week 
 
@@ -58,7 +58,7 @@ Returns the view count of a specific article for a given week.
 
 | Parameter | Description                                          |
 |-----------|------------------------------------------------------|
-| article   | The title of the article.                            |
+| article   | The [title of the article.](#article-titles)         |
 | year      | The year of the date, in YYYY format.                |
 | week      | The [Iso week number](#iso-week-number) of the date. |
 
@@ -70,15 +70,20 @@ Returns the view count of a specific article for a given month.
 
 ### Parameters
 
-| Parameter | Description                           |
-|-----------|---------------------------------------|
-| article   | The title of the article.             |
-| year      | The year of the date, in YYYY format. |
-| month     | The month of the date, in MM format.  |
+| Parameter | Description                                  |
+|-----------|----------------------------------------------|
+| article   | The [title of the article.](#article-titles) |
+| year      | The year of the date, in YYYY format.        |
+| month     | The month of the date, in MM format.         |
 
 
 
 # Appendix
+## Article titles
+Article titles will use the same formatting as required from the dependent API.
+ * Any spaces should be replaced with underscores.
+ * Special characters should be URI-encoded, so that non-URI-safe characters like %, / or ? are accepted.
+
 ## ISO Week number
 Week numbers in this service use the ISO formatting convention, as specified in the [python documentation](https://docs.python.org/3/library/datetime.html#datetime.date.isocalendar).
 
