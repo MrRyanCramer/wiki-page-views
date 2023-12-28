@@ -140,3 +140,9 @@ Depends on context, and needs.  Seek feedback.
  * Internationalization
  * Improved routing
  * API Versioning
+
+ * What code belongs in a model
+   Proper error handling
+   Generate requirements file `pip freeze >requirements.txt`
+   Add section in docs on how to run tests
+   Potential next step feature: Pagination

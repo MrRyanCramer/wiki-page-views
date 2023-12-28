@@ -1,5 +1,4 @@
 from flask import Flask
-from app import views
 
 
 def create_app(test_config=None):
@@ -12,6 +11,8 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
-    app.register_blueprint(views.bp)
+    from .api import api as api_blueprint
+
+    app.register_blueprint(api_blueprint, url_prefix='/api/v1/views')
 
     return app
