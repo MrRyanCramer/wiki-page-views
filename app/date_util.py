@@ -4,15 +4,28 @@ from typing import Tuple, List
 from app.exceptions import ValidationError
 
 
-def validate_month(year: int, month: int) -> datetime.date:
+def get_month_range(year: int, month: int) -> Tuple[datetime.date, datetime.date]:
     try:
-        input_date = datetime.date(year, month, 1)
+        last_day_number_for_month = calendar.monthrange(year, month)[1]
+        return (
+            datetime.date(year, month, 1),
+            datetime.date(year, month, last_day_number_for_month)
+        )
     except ValueError:
         raise ValidationError('Invalid year or month provided')
-    return input_date
 
 
-def validate_date_in_past(date: datetime.date):
+def get_week_range(year: int, week: int) -> Tuple[datetime.date, datetime.date]:
+    try:
+        return (
+            datetime.date.fromisocalendar(year, week, 1),
+            datetime.date.fromisocalendar(year, week, 7)
+        )
+    except ValueError:
+        raise ValidationError('Invalid year or week provided')
+
+
+def verify_date_in_past(date: datetime.date):
     if date > datetime.date.today():
         raise ValidationError("Date information provided must be in the past")
 
