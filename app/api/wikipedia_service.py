@@ -76,7 +76,10 @@ class WikipediaService:
         formatted_article = _format_article(article)
 
         # Build and send request
-        url = self._build_views_per_article_url(formatted_article, first_day_of_month, last_day_of_month, Granularity.daily)
+        url = self._build_views_per_article_url(formatted_article,
+                                                first_day_of_month,
+                                                last_day_of_month,
+                                                Granularity.daily)
         response = self._send_request(url)
 
         # Format response
@@ -90,7 +93,10 @@ class WikipediaService:
         formatted_article = _format_article(article)
 
         # Build and send request
-        url = self._build_views_per_article_url(formatted_article, first_day_in_week, last_day_in_week, Granularity.daily)
+        url = self._build_views_per_article_url(formatted_article,
+                                                first_day_in_week,
+                                                last_day_in_week,
+                                                Granularity.daily)
         response = self._send_request(url)
 
         # Format response
@@ -104,16 +110,27 @@ class WikipediaService:
         formatted_article = _format_article(article)
 
         # Build and send request
-        url = self._build_views_per_article_url(formatted_article, first_day_in_month, last_day_in_month, Granularity.monthly)
+        url = self._build_views_per_article_url(formatted_article,
+                                                first_day_in_month,
+                                                last_day_in_month,
+                                                Granularity.monthly)
         response = self._send_request(url)
 
         # Format response
         return response.json()['items'][0]
 
-    def _build_views_per_article_url(self, article: str, start_date: datetime.date, end_date: datetime.date, granularity: Granularity):
+    def _build_views_per_article_url(self,
+                                     article: str,
+                                     start_date: datetime.date,
+                                     end_date: datetime.date,
+                                     granularity: Granularity):
         formatted_start = start_date.strftime("%Y%m%d")
         formatted_end = end_date.strftime("%Y%m%d")
-        return self._views_per_article_base_url + article + '/' + granularity.value + '/' + formatted_start + '/' + formatted_end
+        return (self._views_per_article_base_url +
+                article + '/' +
+                granularity.value + '/' +
+                formatted_start + '/' +
+                formatted_end)
 
     def _build_monthly_top_url(self, date: datetime.date) -> str:
         return self._top_viewed_articles_base_url + date.strftime('%Y/%m/all-days')

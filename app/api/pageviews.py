@@ -1,12 +1,7 @@
 import datetime
-from requests.exceptions import HTTPError
 from functools import reduce
-
-from flask import abort
-
 from .wikipedia_service import WikipediaService
 from . import api
-from ..exceptions import ValidationError
 
 
 @api.route('/top-articles/week/<int:year>/<int:week>')
