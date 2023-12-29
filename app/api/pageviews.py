@@ -6,9 +6,7 @@ from . import api
 
 @api.route('/top-articles/week/<int:year>/<int:week>')
 def top_articles_for_week(year: int, week: int):
-    service = WikipediaService()
-    articles = service.get_top_articles_for_week(year, week)
-    # TODO Consider better formatting for output instead of tuples
+    articles = WikipediaService().get_top_articles_for_week(year, week)
     return {'articles': articles}
 
 

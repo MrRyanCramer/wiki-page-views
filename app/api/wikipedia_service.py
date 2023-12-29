@@ -24,7 +24,6 @@ class WikipediaService:
         'https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia.org/all-access/'
     _headers = {'User-Agent': 'grow-therapy-take-home/0.0.1',
                 "accept": "application/json"}
-    granularity = {}
 
     def get_top_articles_for_week(self, year: int, week: int):
         # Validate input
@@ -32,14 +31,13 @@ class WikipediaService:
         date_util.verify_date_in_past(last_day_in_week)
 
         # Build a dictionary of article_title to article_views
+        # A dict is chosen to optimize for lookup speed during the building process
         view_data = {}
-        # For each day in the range, get the top 1000 articles
-        days = date_util.get_dates_for_week(year, week)
-        for day in days:
-            url = self._build_daily_top_url(day)
-            response = self._send_request(url)
-            articles = response.json()['items'][0]['articles']
-            # Populate the map, adding the day's views for every article in the top 1000 of the day
+        # For each day in the week, get the top 1000 articles
+        dates = date_util.get_dates_for_week(year, week)
+        for date in dates:
+            articles = self.get_top_articles_for_day(date)
+            # Populate the dictionary, adding the day's views for every article in the top 1000 of the day
             for article in articles:
                 title = article['article']
                 view_data[title] = view_data.get(title, 0) + article['views']
@@ -48,10 +46,20 @@ class WikipediaService:
         # Only return the top 1000 articles
         filtered_articles = sorted_articles[0:1000]
         # Format the output
-        formatted_articles = [{'article': article[0],
-                               'views': article[1],
-                               'rank': rank + 1} for rank, article in enumerate(filtered_articles)]
-        return formatted_articles
+        return [{'article': article[0],
+                 'views': article[1],
+                 'rank': rank + 1} for rank, article in enumerate(filtered_articles)]
+
+    def get_top_articles_for_day(self, date: datetime.date):
+        # Validate input
+        date_util.verify_date_in_past(date)
+
+        # Build and send request
+        url = self._build_daily_top_url(date)
+        response = self._send_get_request(url)
+
+        # Format response
+        return response.json()['items'][0]['articles']
 
     def get_top_articles_for_month(self, year: int, month: int):
         # Validate input
@@ -60,7 +68,7 @@ class WikipediaService:
 
         # Build and send request
         url = self._build_monthly_top_url(last_day_of_month)
-        response = self._send_request(url)
+        response = self._send_get_request(url)
 
         # Format response
         return response.json()['items'][0]['articles']
@@ -80,7 +88,7 @@ class WikipediaService:
                                                 first_day_of_month,
                                                 last_day_of_month,
                                                 Granularity.daily)
-        response = self._send_request(url)
+        response = self._send_get_request(url)
 
         # Format response
         return response.json()['items']
@@ -97,7 +105,7 @@ class WikipediaService:
                                                 first_day_in_week,
                                                 last_day_in_week,
                                                 Granularity.daily)
-        response = self._send_request(url)
+        response = self._send_get_request(url)
 
         # Format response
         return response.json()['items']
@@ -114,7 +122,7 @@ class WikipediaService:
                                                 first_day_in_month,
                                                 last_day_in_month,
                                                 Granularity.monthly)
-        response = self._send_request(url)
+        response = self._send_get_request(url)
 
         # Format response
         return response.json()['items'][0]
@@ -138,7 +146,8 @@ class WikipediaService:
     def _build_daily_top_url(self, date: datetime.date) -> str:
         return self._top_viewed_articles_base_url + date.strftime('%Y/%m/%d')
 
-    def _send_request(self, url: str) -> Response:
+    def _send_get_request(self, url: str) -> Response:
+        """Sends a GET request to the provided url, raising :class:`HTTPError` on error"""
         response = requests.get(url, headers=self._headers)
         response.raise_for_status()
         return response
