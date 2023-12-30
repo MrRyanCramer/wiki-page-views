@@ -1,5 +1,8 @@
 # Context
-
+This is an academic project, with the intentions of learning and serving as a demonstration of my web development skills.
+Going in to this project, I made the decision to utilize the opportunity to learn a technology stack that was completely new to me.
+There are some additional challenges when working with a new tech stack, 
+so if you notice some language or library features that are not being leveraged quite right, let me know, I'd love the feedback!
 
 # Installation
 
@@ -8,10 +11,26 @@ Unit tests were implemented using pytest.  To run the entire test suite, use the
 
 # API Documentation
 
-## Top viewed articles for week
-Returns a list of the most viewed articles for a given week.
+## Response Codes and Errors
+All provided endpoints will return json.
 
-`GET /views/top-articles/week/{year}/{week}`
+On a successful response, endpoints will return a status code: `200`
+
+On api errors, endpoints will return a json response with more information in the `error` and `message` values.
+The status code of an error response will be a `4XX` or `5XX`
+
+Example error response:
+```
+{
+  "error": "bad request",
+  "message": "Invalid year or month provided"
+}
+```
+
+## Top viewed articles for week
+Returns a list of the top 1000 most viewed articles for a given week.
+
+`GET /api/v1/views/top-articles/week/{year}/{week}`
 
 ### Parameters
 | Parameter | Description                                          |
@@ -19,13 +38,30 @@ Returns a list of the most viewed articles for a given week.
 | year      | The year of the date, in YYYY format.                |
 | week      | The [Iso week number](#iso-week-number) of the date. |
 
-### Response
+### Example Response
+```
+{
+  "articles": [
+    {
+      "article": "Main_Page",
+      "rank": 1,
+      "views": 33951684
+    },
+    {
+      "article": "Special:Search",
+      "rank": 2,
+      "views": 8984262
+    },
+    ...
+  ]
+}
+```
 
 ## Top viewed articles for month
 
-Returns a list of the most viewed articles for a given month.
+Returns a list of the top 1000 most viewed articles for a given month.
 
-`GET /views/top-articles/month/{year}/{month}`
+`GET /api/v1/views/top-articles/month/{year}/{month}`
 
 ### Parameters
 
@@ -34,11 +70,30 @@ Returns a list of the most viewed articles for a given month.
 | year      | The year of the date, in YYYY format. |
 | month     | The month of the date, in MM format.  |
 
+### Example response
+```
+{
+  "articles": [
+    {
+      "article": "Main_Page",
+      "rank": 1,
+      "views": 153563201
+    },
+    {
+      "article": "Special:Search",
+      "rank": 2,
+      "views": 41184546
+    },
+    ...
+  ]
+}
+```
+
 ## Highest view day of month for article
 
 Returns the day of the month when an article got the most page views.
 
-`GET /views/top-day/{article}/{year}/{month}`
+`GET /api/v1/views/top-day/{article}/{year}/{month}`
 
 ### Parameters
 
@@ -48,11 +103,18 @@ Returns the day of the month when an article got the most page views.
 | year      | The year of the date, in YYYY format.        |
 | month     | The month of the date, in MM format.         |
 
+### Example response
+```
+{
+  "day": 4
+}
+```
+
 ## Article views for week 
 
 Returns the view count of a specific article for a given week.
 
-`GET /views/article/week/{article}/{year}/{week}`
+`GET /api/v1/views/article/week/{article}/{year}/{week}`
 
 ### Parameters
 
@@ -62,11 +124,18 @@ Returns the view count of a specific article for a given week.
 | year      | The year of the date, in YYYY format.                |
 | week      | The [Iso week number](#iso-week-number) of the date. |
 
+### Example response
+```
+{
+  "views": 129
+}
+```
+
 ## Article views for month
 
 Returns the view count of a specific article for a given month.
 
-`GET /views/article/month/{article}/{year}/{month}`
+`GET /api/v1/views/article/month/{article}/{year}/{month}`
 
 ### Parameters
 
@@ -76,7 +145,12 @@ Returns the view count of a specific article for a given month.
 | year      | The year of the date, in YYYY format.        |
 | month     | The month of the date, in MM format.         |
 
-
+### Example response
+```
+{
+  "views": 600
+}
+```
 
 # Appendix
 ## Article titles
@@ -102,6 +176,7 @@ The second endpoint has a limitation, where it only supports timespans of a mont
 Using a month would not provide adequate granularity.
 This leads to the conclusion of gathering the data from 7 calls to the most viewed articles API, one for each day in the week.
 Once the data is gathered, it can be aggregated and sorted.
+I don't love this from a performance standpoint, and it would be a likely early candidate for optimization.
 
 There are corner cases with the threshold values that could make this approach not generate 100% accurate results.
 Luckily, these corner cases are resolved with the listed assumption that any article not listed on a day should be considered to have no views.
@@ -124,8 +199,10 @@ We can set the range to the target month, and the granularity to daily.
 The resulting array can be searched for the maximum view number, and the day that it corresponds to.
 
 ## Assumptions
+
 In the implemented wikipedia service, hardcoded defaults were chosen when retrieving information
-The actual values to be used would depend on the use case, and the code could be easily updated to reflect the desired behavior.
+The actual values to be used would depend on the use case,
+and the code could be easily updated to reflect the desired behavior.
 
 | Parameter | Default            | Rationale                                      |
 |-----------|--------------------|------------------------------------------------|
@@ -134,20 +211,33 @@ The actual values to be used would depend on the use case, and the code could be
 | agent     | `user`             | Only include visits from users. (Exclude bots) |
 
 
-## Next Steps
-Depends on context, and needs.  Seek feedback.
- * Authentication
- * Persistence (currently designed in a passthrough manor)
- * Caching
- * Observability
- * Scalability
- * Convenience methods
- * Internationalization
- * Improved routing
- * API Versioning
+## Project scope and next steps
+When deciding the initial scope of the project, some topics were left as next steps.
+Many of the decision factors for these topics would require more context.
+I've included a few thoughts on some of these topics.
+ * Authentication / Authorization
 
- * What code belongs in a model
-   Proper error handling
-   Generate requirements file `pip freeze >requirements.txt`
-   Add section in docs on how to run tests
-   Potential next step feature: Pagination
+This API is permissive, and does not attempt to implement access control. 
+ * Performance / Scalability
+
+The API was designed in a passthrough manor such that all data is gathered from the wikipedia api in real time.
+This does not attempt to optimize for performance, and would be most appropriate for small call volume.
+In fact, this is a great time to talk about rate limits.
+As the wikipedia API has a rate limit set, this service would eventually also be impacted by that limit.
+
+Caching could also be employed to improve performance, depending on the composition of incoming calls.
+Sparse calls to information about rare articles are unlikely to benefit much,
+but there is likely more performance to be gained on caching for an endpoint
+like the most viewed articles for a given month
+
+Another way of improving performance could be to add a form of persistence.
+This would involve storing the view data after it has been retrieved from the Wikipedia API.
+Future calls for that information could then use the data stores, reducing the load on the Wikipedia API, and
+removing the overhead of the additional HTTP requests.
+
+ * Observability
+
+It's important to know when something goes wrong with your service.
+This implementation does not have that covered.
+To operate in a production environment, adding logging would be recommended at minimum.
+More optimally, integrate with other observability tools such as Kibana, Datadog and PagerDuty. 

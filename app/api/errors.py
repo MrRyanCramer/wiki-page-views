@@ -23,14 +23,14 @@ def validation_error(e):
     return bad_request(e.args[0])
 
 
-@api.errorhandler(KeyError)
-def key_error(e):
-    return internal_server_error('Key not found')
-
-
 @api.errorhandler(JSONDecodeError)
 def json_decode_error(e):
     return internal_server_error('Error occurred while attempting to decode json')
+
+
+@api.errorhandler(KeyError)
+def key_error(e):
+    return internal_server_error('Key not found')
 
 
 @api.errorhandler(404)
