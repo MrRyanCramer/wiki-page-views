@@ -1,5 +1,4 @@
 /.idea/
-/.pytest_cache/
+**/.pytest_cache/
+**/__pycache__/
 /GrowTherapyTakeHome.iml
-/app/tests/.pytest_cache/
-/app/api/.pytest_cache/
