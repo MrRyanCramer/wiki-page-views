@@ -62,6 +62,7 @@ Returns a list of the top 1000 most viewed articles for a given week.
 | week      | The [Iso week number](#iso-week-number) of the date. |
 
 ### Example Response
+_Note: Only displays 2 of 1000 for brevity._
 ```json
 {
   "articles": [
@@ -75,7 +76,6 @@ Returns a list of the top 1000 most viewed articles for a given week.
       "rank": 2,
       "views": 8984262
     },
-    ...
   ]
 }
 ```
@@ -94,6 +94,7 @@ Returns a list of the top 1000 most viewed articles for a given month.
 | month     | The month of the date, in MM format.  |
 
 ### Example response
+_Note: Only displays 2 of 1000 for brevity._
 ```json
 {
   "articles": [
@@ -107,7 +108,6 @@ Returns a list of the top 1000 most viewed articles for a given month.
       "rank": 2,
       "views": 41184546
     },
-    ...
   ]
 }
 ```
@@ -244,9 +244,12 @@ This API is permissive, and does not attempt to implement access control.
  * Performance / Scalability
 
 The API was designed in a passthrough manor such that all data is gathered from the wikipedia api in real time.
-This does not attempt to optimize for performance, and would be most appropriate for small call volume.
+This does not attempt to optimize for performance, and would be most appropriate for academic or development purposes, with a small call volume.
 In fact, this is a great time to talk about rate limits.
 As the wikipedia API has a rate limit set, this service would eventually also be impacted by that limit.
+
+The web server in use is also not intended for production environments, and would need to be swapped out for something more appropriate.
+[Gunicorn](https://gunicorn.org/) may be one option for this purpose.
 
 Caching could also be employed to improve performance, depending on the composition of incoming calls.
 Sparse calls to information about rare articles are unlikely to benefit much,
