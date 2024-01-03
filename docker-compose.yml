@@ -1,0 +1,5 @@
+services:
+  views:
+      build: .
+      ports:
+        - "8000:5000"

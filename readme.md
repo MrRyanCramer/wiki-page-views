@@ -1,13 +1,36 @@
 # Context
 This is an academic project, with the intentions of learning and serving as a demonstration of my web development skills.
 Going in to this project, I made the decision to utilize the opportunity to learn a technology stack that was completely new to me.
+While I have significant experience in other languages, before this project I have not worked specifically 
+with Python, Flask, or Pytest.
 There are some additional challenges when working with a new tech stack, 
 so if you notice some language or library features that are not being leveraged quite right, let me know, I'd love the feedback!
 
 # Installation
 
+## Docker
+Docker compose can be used to get started quickly.
+```bash
+$ docker-compose up --build
+```
+This API is exposed on port `8000`.  An example call is shown below:
+```bash
+$ curl --request GET \
+  --url http://localhost:8000/api/v1/views/top-day/Dawngate/2023/1
+```
 ## Testing
-Unit tests were implemented using pytest.  To run the entire test suite, use the `pytest` command.
+Unit tests were implemented using pytest.  To run the entire test suite, simply use the `pytest` command.
+
+For more granular control, tests for the page view api were split into two suites. 
+The first suite is for integration tests which hits the wikipedia API directly.
+The second is for unit tests, which utilize mock data instead.
+
+```bash
+# Run the unit tests only
+pytest ./app/tests/test_views.py::TestPageViewMocked
+# Run the integration tests only
+pytest ./app/tests/test_views.py::TestPageViewIntegration
+```
 
 # API Documentation
 
@@ -20,7 +43,7 @@ On api errors, endpoints will return a json response with more information in th
 The status code of an error response will be a `4XX` or `5XX`
 
 Example error response:
-```
+```json
 {
   "error": "bad request",
   "message": "Invalid year or month provided"
@@ -39,7 +62,7 @@ Returns a list of the top 1000 most viewed articles for a given week.
 | week      | The [Iso week number](#iso-week-number) of the date. |
 
 ### Example Response
-```
+```json
 {
   "articles": [
     {
@@ -71,7 +94,7 @@ Returns a list of the top 1000 most viewed articles for a given month.
 | month     | The month of the date, in MM format.  |
 
 ### Example response
-```
+```json
 {
   "articles": [
     {
@@ -104,7 +127,7 @@ Returns the day of the month when an article got the most page views.
 | month     | The month of the date, in MM format.         |
 
 ### Example response
-```
+```json
 {
   "day": 4
 }
@@ -125,7 +148,7 @@ Returns the view count of a specific article for a given week.
 | week      | The [Iso week number](#iso-week-number) of the date. |
 
 ### Example response
-```
+```json
 {
   "views": 129
 }
@@ -146,7 +169,7 @@ Returns the view count of a specific article for a given month.
 | month     | The month of the date, in MM format.         |
 
 ### Example response
-```
+```json
 {
   "views": 600
 }
