@@ -228,7 +228,7 @@ As the wikipedia API has a rate limit set, this service would eventually also be
 Caching could also be employed to improve performance, depending on the composition of incoming calls.
 Sparse calls to information about rare articles are unlikely to benefit much,
 but there is likely more performance to be gained on caching for an endpoint
-like the most viewed articles for a given month
+like the most viewed articles for a given month.
 
 Another way of improving performance could be to add a form of persistence.
 This would involve storing the view data after it has been retrieved from the Wikipedia API.

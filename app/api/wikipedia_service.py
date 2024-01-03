@@ -1,16 +1,11 @@
 import datetime
 import urllib.parse
 from typing import List, Dict
-
 import requests
 from requests import Response
-import app.date_util as date_util
 from enum import Enum
 
-
-def _format_article(article: str) -> str:
-    """Handles article name formatting of special characters"""
-    return urllib.parse.quote(article)
+import app.date_util as date_util
 
 
 class Granularity(Enum):
@@ -164,3 +159,8 @@ class WikipediaService:
         response = requests.get(url, headers=self._headers)
         response.raise_for_status()
         return response
+
+
+def _format_article(article: str) -> str:
+    """Handles article name formatting of special characters"""
+    return urllib.parse.quote(article)
