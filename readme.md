@@ -1,10 +1,23 @@
 # Context
-This is an academic project, with the intentions of learning and serving as a demonstration of my web development skills.
+This was a take home project assigned as part of an interview process.  Now it serves as a code sample.
+
 Going in to this project, I made the decision to utilize the opportunity to learn a technology stack that was completely new to me.
 While I have significant experience in other languages, before this project I have not worked specifically 
 with Python, Flask, or Pytest.
 There are some additional challenges when working with a new tech stack, 
 so if you notice some language or library features that are not being leveraged quite right, let me know, I'd love the feedback!
+
+# Project Requirements
+The project requirements, as provided to me:
+
+The wikipedia API allows you to get a list of articles with the most page views for a specific day:
+
+https://wikitech.wikimedia.org/wiki/Analytics/AQS/Pageviews
+
+Create a web server with API endpoints that support the following features:
+* Retrieve a list of the most viewed articles for a week or a month (if an article is not listed on a given day, you can assume it has 0 views)
+* Retrieve the view count of a specific article for a week or a month
+* Retrieve the day of the month where an article got the most page views
 
 # Installation
 
